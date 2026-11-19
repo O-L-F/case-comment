@@ -1,0 +1,180 @@
+---
+title: null
+documentclass: article
+fontsize: 11pt
+geometry: margin=1in
+bibliography: citation.bib
+csl: mcgill-en.csl
+link-citations: false
+params:
+  journal_name: "[Prestigious law school] Law Journal"
+  volume_issue: "Volume Z, Number Y"
+  journal_section: "[Some vague doctrine]"
+  case_name: "Jane v. John Doe"
+  citation: "[YEAR] SCC [CASE NUMBER]"
+  court: "Supreme Court of Canada"
+  decision_date: "[DATE]"
+  docket_no: "[number]"
+  author: "[YOUR NAME]"
+  author_affiliation: "Faculty of Law, XYZ University"
+  practice_area: "[This is usually stated in the introduction of the case. It is an enumeration]"
+  abstract_text: >
+    This commentary examines [case name]'s treatment of [doctrinal issue],
+    arguing that the majority's reasoning [one-sentence thesis]. It situates
+    the decision within the existing jurisprudence on [area of law] and
+    considers its implications for [practical/doctrinal consequence].
+  keywords: "Canada; Federalism; [add keywords]"
+output:
+  pdf_document:
+    latex_engine: xelatex
+    toc: false
+    number_sections: true
+    includes:
+      in_header: preamble.tex
+mainfont: "Times New Roman" # swap for "Liberation Serif" or "TeX Gyre Termes" if Times New Roman isn't installed
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+```
+
+```{=latex}
+\thispagestyle{empty}
+\CaseCommentMasthead{`r params$journal_name`}{`r params$volume_issue`}{`r params$journal_section`}{Article}
+```
+
+\begin{center}
+{\LARGE\scshape `r params$case_name`}\\[4pt]
+{\large A Comment on \textit{`r params$case_name`}}
+\end{center}
+
+\bigskip
+\begin{center}
+{\sc `r params$author`}\footnote{`r params$author_affiliation`.}
+\end{center}
+\bigskip
+
+\noindent\textbf{\small ABSTRACT}\par
+\small `r params$abstract_text`
+\normalsize
+
+\bigskip
+\noindent\textbf{\small KEYWORDS:} \small `r params$keywords`
+\normalsize
+
+\bigskip
+\noindent\rule{\textwidth}{0.4pt}
+
+\begingroup
+\small
+\tableofcontents
+\endgroup
+
+\bigskip
+\noindent\rule{\textwidth}{0.4pt}
+
+# Case Metadata
+
+* **Style of Cause:** *`r params$case_name`*
+* **Citation:** `r params$citation` (Docket No. `r params$docket_no`)
+* **Court & Date:** `r params$court` (`r params$decision_date`)
+* **Practice Area:** `r params$practice_area`
+
+```{r csl, echo=F, warning=F, message=F }
+library(readr)
+
+scc_data <- read_csv(
+  "scc_meta-data_1975-2021.csv",
+  locale = locale(encoding = "ISO-8859-1"),
+  show_col_types = FALSE
+)
+scc_data$title <- enc2utf8(scc_data$title)
+scc <- function(id, bibfile = "citation.bib", append = TRUE) {
+  id <- tolower(trimws(id))
+  case <- scc_data[tolower(scc_data$id) == id, ]
+
+  if (nrow(case) == 0) {
+    stop("No SCC decision found for ID: ", id)
+  }
+
+  if (nrow(case) > 1) {
+    stop("More than one decision matched ID: ", id)
+  }
+
+  key <- paste0("scc", id)
+  canlii_url <- sprintf(
+    "https://www.canlii.org/en/ca/scc/doc/%s/%s/%s.html",
+    case$year, id, id
+  )
+
+entry <- paste0(
+  "@jurisdiction{", key, ",\n",
+  "  title        = {{", enc2utf8(case$title), "}},\n",
+  "  author       = {{Supreme Court of Canada}},\n",
+  "  note         = {", case$citation, "},\n",
+  "  number       = {", case$docketNumber, "},\n",
+  "  url          = {", canlii_url, "},\n",
+  "  urldate      = {", Sys.Date(), "}\n",
+  "}\n"
+)
+
+  if (append) {
+    if (file.exists(bibfile) &&
+        grepl(paste0("@\\w+\\{", key, ","), readChar(bibfile, file.info(bibfile)$size))) {
+      message("Entry already exists in ", bibfile, ": ", key)
+    } else {
+      cat("\n", entry, file = bibfile, append = TRUE)
+      message("Added ", key, " to ", bibfile)
+    }
+  }
+
+  invisible(entry)
+}
+```
+
+```{r citation generator, echo=F, warning=F, message=F}
+scc("1989canlii133")
+```
+
+
+\newpage
+
+# Executive Summary & Holding
+
+State the core legal holding in two to three sentences. Summarize the
+practical impact on existing jurisprudence or client strategy.
+
+# Factual & Procedural Background
+
+* **Key Facts:** Outline the material facts that triggered the dispute.
+* **Procedural History:** Summarize lower court rulings and how the matter
+  reached the appellate or reviewing court.
+
+# Legal Issues
+
+1. **Primary Issue:** Frame the central question of law as a neutral
+   *Whether...* statement.
+2. **Secondary Issue:** State any ancillary statutory or evidentiary
+   questions.
+
+# Court's Reasoning & Analysis
+
+* **Majority Opinion:** Detail the statutory interpretation, standard of
+  review, and precedent applied by the majority.
+* **Concurring / Dissenting Opinions:** Note key doctrinal disagreements or
+  alternative frameworks raised on the bench.
+
+"as seen in *General Motors*[@scc1989canlii133] $...$"
+
+
+# Commentary & Practice Implications
+
+* **Doctrinal Significance:** Evaluate whether the decision narrows,
+  expands, or overturns prior case law.
+* **Strategic Recommendations:** List concrete compliance steps, contract
+  drafting updates, or litigation risks for clients.
+
+\bigskip
+\noindent\rule{0.3\textwidth}{0.4pt}
+
+# References

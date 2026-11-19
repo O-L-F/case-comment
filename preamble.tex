@@ -1,0 +1,49 @@
+% ---- HeinOnline-style preamble for case comment PDF ----
+
+\usepackage{fancyhdr}
+\usepackage{titling}
+\usepackage{titlesec}
+\usepackage[format=plain, labelsep=period, font=small]{caption}
+\usepackage{enumitem}
+\usepackage{xcolor}
+
+% Running headers mimicking the journal's "YEAR]   Title   PAGE" footer style
+\newcommand{\CCJournalName}{}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\small\scshape \CCJournalName}
+\fancyhead[R]{\small\thepage}
+\renewcommand{\headrulewidth}{0.4pt}
+\fancyfoot[C]{}
+
+% Section headings: numbered, small caps, like "I. THE ROAD TO ..."
+\titleformat{\section}
+  {\normalfont\large\bfseries}
+  {\Roman{section}.}{0.6em}{\MakeUppercase}
+\titleformat{\subsection}
+  {\normalfont\bfseries}
+  {\Alph{subsection}.}{0.6em}{}
+
+% Tighter paragraph spacing, first-line indent like a law journal
+\setlength{\parindent}{1.5em}
+\setlength{\parskip}{0pt}
+
+% Footnote rule and smaller footnote text, as in the original PDF
+\renewcommand{\footnoterule}{\vspace*{-3pt}\noindent\rule{0.35\textwidth}{0.4pt}\vspace*{2.5pt}}
+\usepackage[hang,flushmargin]{footmisc}
+\renewcommand{\footnotesize}{\fontsize{8.5pt}{10pt}\selectfont}
+
+% Masthead command: journal banner + vol/issue + "Commentary" label + rule
+\newcommand{\CaseCommentMasthead}[4]{%
+  \renewcommand{\CCJournalName}{#1}%
+  \begin{center}
+    {\Large\scshape #1}\\[2pt]
+    {\small #2}\\[2pt]
+    {\small\itshape #3}
+  \end{center}
+  \vspace{4pt}
+  \noindent\rule{\textwidth}{0.6pt}\\[2pt]
+  {\small\itshape Commentary}\hfill{\small #4}\\[6pt]
+  \noindent\rule{\textwidth}{0.4pt}
+  \vspace{8pt}
+}
